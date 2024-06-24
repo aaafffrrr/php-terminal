@@ -7,10 +7,8 @@ use Stripe\PaymentIntent;
 
 header('Content-Type: application/json');
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
-
-$stripeSecretKey = getenv('STRIPE_SECRET_KEY');
+// Hardcoded secret key
+$stripeSecretKey = 'sk_test_51OEbBSEXbbIxpm4PC9I9U1qckhGatlT7FMdGASixi9txWXAAdeDhiW3QzWFoyafs6wcVaM2W5eLhlJVsxl67Qr8M00LKmr5qVY';
 Stripe::setApiKey($stripeSecretKey);
 
 $input = file_get_contents('php://input');
@@ -26,7 +24,6 @@ try {
         'amount' => $data['amount'] * 100, // amount in cents
         'currency' => 'usd',
         'payment_method_types' => ['card'],
-        'description' => 'Payment from ' . $data['name'],
         'metadata' => [
             'name' => $data['name'],
             'email' => $data['email'],
