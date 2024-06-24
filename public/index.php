@@ -79,12 +79,8 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const publishableKey = '<?php echo getenv("STRIPE_PUBLISHABLE_KEY"); ?>';
+            const publishableKey = 'pk_test_51OEbBSEXbbIxpm4PY1x3VvwQz6GRjIQa5pjAbIpgD51H7RVxWhYUt94o3ApCzop0VXGxzmltXO7ceJ8KIYHprzqk00wGJzaAUU';
             console.log("Stripe Publishable Key:", publishableKey); // Debugging line
-            if (!publishableKey) {
-                document.getElementById('error-message').textContent = 'Stripe publishable key is not set.';
-                return;
-            }
 
             const stripe = Stripe(publishableKey);
             const elements = stripe.elements();
