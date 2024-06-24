@@ -71,3 +71,72 @@
             <label for="amount">Amount (USD)</label>
             <input type="number" id="amount" required>
         </div>
+        <div id="card-element"><!--Stripe.js injects the Card Element--></div>
+        <button id="submit">Pay</button>
+        <div id="error-message"></div>
+    </form>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('<?php echo getenv("STRIPE_PUBLISHABLE_KEY"); ?>');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zip = document.getElementById('zip').value;
+            const amount = document.getElementById('amount').value;
+
+            try {
+                const response = await fetch('/process_payment.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, address, city, state, zip, amount })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                const clientSecret = data.clientSecret;
+
+                const { error } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: {
+                            name: name,
+                            email: email,
+                            address: {
+                                line1: address,
+                                city: city,
+                                state: state,
+                                postal_code: zip,
+                            },
+                        }
+                    },
+                });
+
+                if (error) {
+                    document.getElementById('error-message').textContent = error.message;
+                } else {
+                    document.getElementById('error-message').textContent = 'Payment successful!';
+                }
+            } catch (error) {
+                document.getElementById('error-message').textContent = 'Failed to process payment: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
