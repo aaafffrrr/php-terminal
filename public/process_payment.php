@@ -26,6 +26,7 @@ try {
         'amount' => $data['amount'] * 100, // amount in cents
         'currency' => 'usd',
         'payment_method_types' => ['card'],
+        'description' => 'Payment from ' . $data['name'],
         'metadata' => [
             'name' => $data['name'],
             'email' => $data['email'],
