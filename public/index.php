@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Stripe Virtual Terminal</title>
+    <title>Stripe Payment Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
