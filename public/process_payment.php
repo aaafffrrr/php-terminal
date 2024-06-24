@@ -16,8 +16,8 @@ Stripe::setApiKey($stripeSecretKey);
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
-if (!isset($data['amount'])) {
-    echo json_encode(['error' => 'Invalid amount']);
+if (!isset($data['amount']) || !isset($data['name']) || !isset($data['email']) || !isset($data['address']) || !isset($data['city']) || !isset($data['state']) || !isset($data['zip'])) {
+    echo json_encode(['error' => 'Invalid input']);
     exit;
 }
 
@@ -25,7 +25,15 @@ try {
     $paymentIntent = PaymentIntent::create([
         'amount' => $data['amount'] * 100, // amount in cents
         'currency' => 'usd',
-        'payment_method_types' => ['card_present'],
+        'payment_method_types' => ['card'],
+        'metadata' => [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'address' => $data['address'],
+            'city' => $data['city'],
+            'state' => $data['state'],
+            'zip' => $data['zip']
+        ]
     ]);
 
     echo json_encode([
